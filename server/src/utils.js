@@ -1,4 +1,8 @@
-const SQL = require('sequelize');
+const {Sequelize} = require('sequelize');
+
+const us = "root";
+const pas = "toor";
+
 
 module.exports.paginateResults = ({
   after: cursor,
@@ -28,42 +32,44 @@ module.exports.paginateResults = ({
     : results.slice(0, pageSize);
 };
 
-module.exports.createStore = () => {
-  const Op = SQL.Op;
-  const operatorsAliases = {
-    $in: Op.in,
-  };
+// module.exports.createStore = () => {
+//   const db = new Sequelize({
+//     dialect: 'sqlite',
+//     storage: './store.sqlite'
+//   });
 
-  const db = new SQL('database', 'username', 'password', {
-    dialect: 'sqlite',
-    storage: './store.sqlite',
-    operatorsAliases,
-    logging: false,
+//connexion à mysql
+module.exports.createStore = () => {
+  const db = new Sequelize("graph", us, pas , {
+    host: "localhost",
+    dialect: 'mysql'
   });
 
+
+
   const users = db.define('user', {
-    id: {
-      type: SQL.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    createdAt: SQL.DATE,
-    updatedAt: SQL.DATE,
-    email: SQL.STRING,
-    token: SQL.STRING,
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE,
+    email: Sequelize.STRING,
+    profileImage: Sequelize.STRING,
+    token: Sequelize.STRING,
   });
 
   const trips = db.define('trip', {
-    id: {
-      type: SQL.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    createdAt: SQL.DATE,
-    updatedAt: SQL.DATE,
-    launchId: SQL.INTEGER,
-    userId: SQL.INTEGER,
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE,
+    launchId: Sequelize.INTEGER,
+    userId: Sequelize.INTEGER,
+  });
+  //test de connexion à la db
+  db
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
   });
 
-  return { users, trips };
+  return { db, users, trips };
 };
