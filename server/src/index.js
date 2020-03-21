@@ -26,7 +26,6 @@ const server = new ApolloServer({
       return { user: { ...user.dataValues } };
     },
   typeDefs,
-
   resolvers,
   dataSources: () => ({
     launchAPI: new LaunchAPI(),
@@ -40,4 +39,5 @@ const server = new ApolloServer({
 
 server.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`);
+  
 });
